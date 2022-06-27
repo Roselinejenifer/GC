@@ -1,0 +1,177 @@
+const ATMDeposit = ({ onChange, isDeposit, validTransaction }) => {
+    const choice = ['Deposit', 'Cash Back'];
+    var isValid = validTransaction;
+    console.log(`Valid?: ${isValid}`);
+    console.log(`ATM isDeposit: ${isDeposit}`);
+    return (
+      <label className="label huge">
+        <h3> {choice[Number(!isDeposit)]}</h3>
+        <input id="number-input" type="number" width="200" onChange={onChange}></input>
+        <input type="submit" width="200" value="Submit" id="submit-input" disabled={isValid ? false : true}></input>
+      </label>
+    );
+  };
+  
+  const Account = () => {
+    const [deposit, setDeposit] = React.useState(0);
+    const [totalState, setTotalState] = React.useState(0);
+    const [isDeposit, setIsDeposit] = React.useState(true);
+    const [atmMode, setAtmMode] = React.useState("");
+    const [validTransaction, setValidTransaction] = React.useState(false);
+    const [msg, setMsg] = React.useState('Welcome.  Please select your activity.' );
+  
+    let status = `Account Balance $ ${totalState} `;
+    console.log(`Account Rendered with isDeposit: ${isDeposit}`);
+    const handleChange = (event) => {
+      console.log(`handleChange ${event.target.value}`);
+      setDeposit(Number(event.target.value));
+      if(Number(event.target.value) <= 0) {
+        setValidTransaction(false)
+        console.log(`Crap transaction.`);
+        return;
+      }else if(atmMode === "Cash Back" && Number(event.target.value) > totalState) {
+        console.log(`Crap transaction.`);
+        setValidTransaction(false);
+        setMsg("Sorry mate, you don't have enough cash for that.");
+      }else{
+        console.log(`Gooden transaction.`);
+        setValidTransaction(true);
+        setMsg(`Please enter the amount you would like to ${isDeposit ? "Deposit" : "Withdraw"}.`);
+      }
+    };
+    const handleSubmit = (event) => {
+      let newTotal = isDeposit ? totalState + deposit : totalState - deposit;
+      setTotalState(newTotal);
+      setValidTransaction(false);
+      event.preventDefault();
+      setMsg("Nice!  Thanks for the cash.");
+    };
+    const handleModeSelect = (event) => {
+      console.log(`handleModeSelect ${event.target.value}`);
+      setAtmMode(event.target.value);
+      console.log(`Atm mode is: ${event.target.value}`);
+      event.target.value === "Deposit" ? setIsDeposit(true) : setIsDeposit(false);
+      event.preventDefault();
+      if(event.target.value === "Deposit") {
+        setMsg("Please enter the amount you would like to deposit.");
+      } else {
+        setMsg("Please enter the amount you would like to withdraw.");
+      }
+    };
+    return (
+    <div id="root">
+    <div className="main">
+    <form onSubmit={handleSubmit}>
+        <h2 id="total">{status}</h2>
+        {/* <label>Please select what you would like to do at Johnny's: </label> */}
+        <select onChange={(e) => handleModeSelect(e)} name="mode" id="mode-select">
+        <option id="no-selection" value=""></option>
+        <option id="deposit-selection" value="Deposit">Deposit</option>
+        <option id="cashback-selection" value="Cash Back">Cash Back</option>
+        </select>
+        {atmMode != "" && <ATMDeposit onChange={handleChange} isDeposit={isDeposit} validTransaction={validTransaction}></ATMDeposit>}
+      </form>
+      </div>
+      <h2>{msg}</h2>
+      </div>
+    );
+  };
+  // ========================================
+  ReactDOM.render(<Account />, document.getElementById('root'));
+
+---------------------------------------------------------------
+
+
+
+
+import "./styles.css";
+import { useState } from "react";
+
+export default function App() {
+  const [state, setState] = useState([]);
+  const [load, setLoad] = useState(true);
+  let transactionState = 0; // state of this transaction
+  let [totalState, setTotalstate] = useState(0); // Account total at Bank
+  let status = "Account Balance $zero";
+  function handle(e) {
+    if (e.target.value === "Deposit") setState(true);
+    console.log(e.target.value);
+  }
+  function handleload(e) {
+    if (e.target.value === "") setLoad(true);
+    if (e.target.value === "Deposit") {
+      setLoad(false);
+      setState(true);
+    }
+    if (e.target.value === "Cashback") {
+      setLoad(false);
+      setState(false);
+    }
+  }
+  const handleChange = (event) => {
+    transactionState = Number(event.target.value);
+  };
+  const handleSubmit = (event) => {
+    // transactionState = Number(event.target.value);
+    setTotalstate(totalState + transactionState);
+    // status = `Account Balance is $ ${totalState}`;
+    // document.getElementById("total").innerHTML = status;
+    event.preventDefault();
+  };
+  const handleSubmitcash = (event) => {
+    if (transactionState < totalState) {
+      setTotalstate(totalState - transactionState);
+    }
+    if (transactionState >= totalState) {
+      // setTotalstate(totalState - transactionState);
+      alert("Oops! your balance is not sufficient to withdraw. ");
+    }
+    // status = `Account Balance $ ${totalState}`;
+    // document.getElementById("total").innerHTML = status;
+    event.preventDefault();
+  };
+
+  console.log(load);
+
+  return (
+    <div className="App">
+      <h1 id="total">Account balance is ${totalState}</h1>
+
+      {load ? (
+        <select onClick={handleload}>
+          <option> </option>
+          <option>Deposit</option>
+          <option>Cashback</option>
+        </select>
+      ) : state ? (
+        <form onSubmit={handleSubmit}>
+          <select onClick={handleload}>
+            <option> </option>
+            <option>Deposit</option>
+            <option>Cashback</option>
+          </select>
+          <br></br>
+          <br></br>
+          <label>
+            {" "}
+            Deposit <input type="number" onChange={handleChange} />
+            <input type="submit" />
+          </label>
+        </form>
+      ) : (
+        <form onSubmit={handleSubmitcash}>
+          <select onClick={handleload}>
+            <option> </option>
+            <option>Deposit</option>
+            <option>Cashback</option>
+          </select>
+          <label>
+            {" "}
+            Cashback <input type="number" onChange={handleChange} />
+            <input type="submit" />
+          </label>
+        </form>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,106 @@
+
+
+
+
+
+
+
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+  <head>
+    <title>
+
+    </title>
+  </head>
+  <body>
+    <h1>Refresh and open console to check the output</h1>
+<script>
+
+function words(){
+var para="The nightingale, as soon as April bringeth Unto her rested sense a perfect waking,While late bare earth, proud of new clothing, springeth,Sings out her woes, a thorn her song-book making,And mournfully bewailing,Her throat in tunes expresseth What grief her breast oppresseth For Tereus’ force on her chaste will prevailing.O Philomela fair, O take some gladness,That here is juster cause of plaintful sadness:Thine earth now springs, mine fadeth; Thy thorn without, my thorn my heart invadeth.Alas, she hath no other cause of anguish But Tereus’ love, on her by strong hand wroken,Wherein she suffering, all her spirits languish; Full womanlike complains her will was broken.But I, who daily craving, Cannot have to content me,Have more cause to lament me,Since wanting is more woe than too much having.O Philomela fair, O take some gladness,That here is juster cause of plaintful sadness:Thine earth now springs, mine fadeth;Thy thorn without, my thorn my heart invadeth."
+
+para=para.replace(/,/g,"");
+para=para.replace(/:/g,"");
+para=para.replace(/;/g,"");
+para=para.replace(/\./g,"");
+para=para.toLowerCase(para);
+console.log(para);//this code is used to view the varibale text after the following changes
+
+let word = para.split(" ")//here we spliting the space in the words and storing it in the variable named Words
+console.log(`Total words: ${word.length}`);//to view the changes
+
+const count = {};//creating the empty object
+
+word.forEach((item) => {
+  if (count[item] == null) count[item] = 1;
+    else {
+      count[item] += 1;
+    }
+  
+  
+});//using for of to filter the reapted words and assinging to the empty array
+
+console.log(count);//to view the output
+
+// let words=word.sort(function(a,b){
+// return b[1]-a[1];
+// });
+// console.log(words);
+// var mostrepeated=words.slice(0,5)
+// console.log(mostrepeated);
+}
+words();
+
+
+    </script>
+</body>
+</html>
+--------------------------------------------------------------
+import "./styles.css";
+//import react from 'react';
+
+export default function App() {
+  // window.onload = () => {
+  //   let output = countingtheWords();
+  //   console.log(output);
+  // };
+  function countingtheWords() {
+    let text =
+      "Fear is a natural, powerful, and primitive human emotion. It involves a universal biochemical response as well as a high individual emotional response. Fear alerts us to the presence of danger or the threat of harm, whether that danger is physical or psychological.Sometimes fear stems from real threats, but it can also originate from imagined dangers. Fear can also be a symptom of some mental health conditions including panic disorder, social anxiety disorder, phobias, and post-traumatic stress disorder (PTSD).Fear is composed of two primary reactions to some type of perceived threat: biochemical and emotional.Biochemical Reaction Fear is a natural emotion and a survival mechanism. When we confront a perceived threat, our bodies respond in specific ways. Physical reactions to fear include sweating, increased heart rate, and high adrenaline levels that make us extremely alert.";
+    text = text.replace(/,/g, "");
+    text = text.replace(/\./g, "");
+    text = text.toLowerCase(text);
+
+    let words = text.split(" ");
+    console.log(` ${words.length}`);
+    //console.log(words);
+    const count = {};
+    words.map((item) => {
+      if (count[item] == null) count[item] = 1;
+      else count[item]++;
+      return count;
+    });
+    console.log(count);
+  }
+  countingtheWords();
+}

@@ -1,0 +1,81 @@
+import { useState, useEffect } from "react";
+import { Container } from "react-bootstrap";
+import axios from "axios";
+
+export default function App() {
+  const [query, setQuery] = useState();
+  const [currentpage, setCurrentpage] = useState(0);
+  const [data, setData] = useState({ hits: [] });
+  const [pageno, setPageno] = useState(5);
+  const [url, setUrl] = useState(
+    "https://hn.algolia.com/api/v1/search?query=india"
+  );
+
+  console.log("Rendering App..");
+  useEffect(() => {
+    console.log("Fetching data..");
+    const fetchdata = async () => {
+      const result = await axios(url);
+      setData(result.data);
+    };
+    fetchdata();
+  }, [url]);
+  console.log(data);
+  // let pageSize = 5;
+  let start = (currentpage - 1) * pageno;
+  let end = start + pageno;
+  let pages = data.hits.length;
+  const n = pages / pageno;
+  const array = [];
+  for (let i = 0; i < n; i++) {
+    array.push(i + 1);
+  }
+
+  function display(e) {
+    let value = Number(e.target.getAttribute("index"));
+    setCurrentpage(value + 1);
+    console.log(currentpage);
+    alert(`you are viewing ${value + 1} page`);
+    e.preventDefault();
+  }
+
+  return (
+    <>
+      <Container>
+        <marquee><h1>Headlines</h1></marquee>
+        <img
+          src="https://i.pinimg.com/originals/4e/b9/45/4eb945eec0590f430da2b6fc4e6d9594.gif"
+          alt="animated image"
+        />
+        <form
+          onSubmit={(e) => {
+            setUrl(`https://hn.algolia.com/api/v1/search?query=${query}`);
+            e.preventDefault();
+          }}
+        >
+          <input type="text" onChange={(e) => setQuery(e.target.value)} />
+          <button>Search</button>
+          <input
+            type="number"
+            placeholder="please enter the number of list"
+            onChange={(e) => setPageno(e.target.value)}
+          />
+        </form>
+
+        {data.hits.slice(start, end).map((item) => (
+          <ul>
+            <li>
+              <a href={item.url}>{item.title} </a>
+            </li>
+          </ul>
+        ))}
+
+        {array.map((item, index) => (
+          <button index={index} onClick={display}>
+            {item}
+          </button>
+        ))}
+      </Container>
+    </>
+  );
+}

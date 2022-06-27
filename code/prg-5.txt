@@ -1,0 +1,315 @@
+import "./App.css";
+import { useState } from "react";
+
+export default function App() {
+  const [items, setItems] = useState([
+    { name: "Promo Exclusion", stock: 10 },
+    { name: "Nike LeBron 9", stock: 20 },
+    { name: "Nike Air Zoom Vomero 16", stock: 55 }
+  ]);
+  const [cart, setCart] = useState([
+    { name: "Promo Exclusion", stock: 0 },
+    { name: "Nike LeBron 9", stock: 0 },
+    { name: "Nike Air Zoom Vomero 16", stock: 0 }
+  ]);
+
+  const [price, setPrice] = useState([50, 80, 99]);
+
+  let [image, setImage] = useState([
+    "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/25c5c430-a8d8-4034-b0ef-9bfdedf58dd2/sb-ishod-wair-skate-shoes-BFw5xR.png",
+    "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/7246f9cb-ad65-4600-89f9-e81d3da232c8/lebron-9-shoes-2Zmjhr.png",
+    "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/57501943-4c62-46e4-97d6-4a65168e9671/air-zoom-vomero-16-road-running-shoes-h0KMSg.png"  ]);
+
+  const [total, setTotal] = useState(0);
+
+  function addCart(event) {
+    let [name, number] = event.target.innerHTML.split(":");
+    let isStock = true;
+    let newItem = items.map((item) => {
+      if (item.name === name) {
+        if (item.stock > 0) item.stock--;
+        else {
+          isStock = false;
+          alert("NO Stock");
+        }
+      }
+      return item;
+    });
+
+    let newCart = cart.map((item, index) => {
+      if (item.name === name) {
+        if (isStock) {
+          item.stock++;
+          console.log(items[index].name);
+          console.log(price[index]);
+          if (name === items[index].name) setTotal(total + price[index]);
+        }
+      }
+      return item;
+    });
+    setItems(newItem);
+  }
+
+  function deleteCart(event) {
+    let [name, number] = event.target.innerHTML.split(":");
+    let isStock = true;
+
+    let newCart = cart.map((item, index) => {
+      if (item.name === name) {
+        if (item.stock > 0) {
+          item.stock--;
+          if (name === items[index].name) setTotal(total - price[index]);
+        } else {
+          isStock = false;
+          alert("NO Item in cart");
+        }
+      }
+      return item;
+    });
+    let newItem = items.map((item) => {
+      if (item.name === name) {
+        if (isStock) item.stock++;
+      }
+      return item;
+    });
+    setItems(newItem);
+  }
+
+  function createShop(item, index) {
+    return (
+      <div className="container">
+        <div>
+          <img src={image[index]} alt={item.name} />
+          <br />
+          <button key={index} id={index} onClick={addCart}>
+            {item.name}:{item.stock}{" "}
+          </button>
+          <h2>Price: {price[index]}</h2>
+        </div>
+      </div>
+    );
+  }
+  function createCart(item, index) {
+    return (
+      <button key={index} id={index} onClick={deleteCart}>
+        {item.name}:{item.stock}{" "}
+      </button>
+    );
+  }
+
+  const addStock = () => {
+    let name = document.getElementById("name").value;
+    let stock = document.getElementById("stock").value;
+    let imageUrl = document.getElementById("image-url").value;
+    let productPrice = Number(document.getElementById("productPrice").value);
+
+    let newItemObj = { name, stock };
+    let newCartObj = { name, stock: 0 };
+
+    setItems([...items, { ...newItemObj }]);
+    setCart([...cart, { ...newCartObj }]);
+    setImage([...image, imageUrl]);
+    setPrice([...price, productPrice]);
+  };
+
+  return (
+    <>
+    <header>
+      <h1>Fashion mart</h1>
+    </header>
+
+    <h1 class="shop">shop your fashion shoes</h1>
+    
+    <div id="shop">
+      {items.map(createShop)}
+      </div>
+
+      <div id="cart"><h1>Cart</h1>
+      {cart.map(createCart)}
+      
+      <br />
+      (Click the cart button to cancel the Product)
+      <h1>Total amount is : {total}$</h1>
+      <h1>Add Item into shop</h1>
+      {/* </div> */}
+
+
+      
+      <form>
+        <input type="text" id="name" placeholder="Enter the product name" />
+        <input type="number" id="stock" placeholder="Enter the product stock" />
+        <input
+          type="text"
+          id="image-url"
+          placeholder="Enter the product imageUrl"
+        />
+        <input
+          type="number"
+          id="productPrice"
+          placeholder="Enter the product Price"
+        />
+        <input type="button" onClick={addStock} value="Submit" />
+        
+      </form>
+      </div>
+    </>
+  );
+}
+--------------------------------------
+import { Button } from "react-bootstrap";
+import { useState } from "react";
+import Particles, { ISourceOptions, Main } from "react-tsparticles";
+import { loadSeaAnemonePreset } from "tsparticles-preset-sea-anemone";
+// import { Carousel } from "react-responsive-carousel";
+import "./styles.css";
+export default function App() {
+  const [costItem, setCostItem] = useState(0);
+  // const [Price, setPrice] = useState();
+  const [stock, setStock] = useState([
+    { name: "Jackets", inStock: 5, price: 100 },
+    { name: "Pants", inStock: 4, price: 50 },
+    { name: "Scarf", inStock: 2, price: 200 },
+    { name: "Pajamas", inStock: 5, price: 100 },
+    { name: "Shirt", inStock: 6, price: 100 }
+  ]);
+
+  const [shopping, setShopping] = useState([
+    { name: "Jackets", inStock: 0, price: 100 },
+    { name: "Pants", inStock: 0, price: 50 },
+    { name: "Scarf", inStock: 0, price: 200 },
+    { name: "Pajamas", inStock: 0, price: 100 },
+    { name: "Shirt", inStock: 0, price: 100 }
+  ]);
+
+  const moveToCart = (e) => {
+    let isStock = true;
+    let [name, number] = e.target.innerHTML.split(":");
+    const newList = stock.map((item, index) => {
+      if (item.name === name) {
+        if (item.inStock > 0) item.inStock--;
+        else {
+          isStock = false;
+          alert("Oops! the item is out of stock");
+        }
+      }
+      return item;
+      // if (item.name === name && item.inStock >= 1) item.inStock--;
+
+      // // if (iteif (item.inStock == 0) alert(`out of stock`);
+      // return item;
+    });
+
+    const newCart = shopping.map((item, index) => {
+      if (item.name === name && isStock) {
+        item.inStock++;
+        setCostItem(costItem + item.price);
+      }
+      return item;
+      // });
+      // if (item.name === name) item.inStock++;
+      // // if (stock === 0) return false;
+      // return item;
+    });
+    const cost = [];
+    // const [init,setInit}=useState();
+    const total = newCart.map((item, index) => {
+      const Price = newCart[index].price;
+      // console.log(typeof Price);
+
+      if (item.name === name) item.inStock * Price;
+      cost.push(item.inStock * Price);
+      console.log(cost);
+      // const [a, b, c, d] = cost;
+
+      const a = cost[0];
+      const b = cost[1];
+      const c = cost[2];
+      const d = cost[3];
+      const res = a + b + c + d;
+      return res;
+
+      // cost.forEach((item) => {
+      //   res = res + item;
+      // });
+      // if (res !== isNaN) console.log("res  is not Nan");
+    });
+    // console.log(costitem);
+
+    // const initialValue = 0;
+    // const costItem = stock.reduce(
+    //   (accumulator, current) => accumulator * current.price
+    // );
+
+    setStock(newList);
+    setShopping([...shopping]);
+
+    // setCostItem(total);
+    // setPrice(Price);
+    // let newItem=
+    // alert("hiCompositionEvent")
+  };
+  const minusCart = (e) => {
+    let isStock = true;
+    let [name, number] = e.target.innerHTML.split(":");
+    const newCart = shopping.map((item, index) => {
+      if (item.name === name && item.inStock > 0) {
+        item.inStock--;
+        setCostItem(costItem - item.price);
+      }
+      return item;
+      // });
+      // if (item.name === name) item.inStock++;
+      // // if (stock === 0) return false;
+      // return item;
+    });
+    const newList = stock.map((item, index) => {
+      if (item.name === name) {
+        item.inStock++;
+      }
+      return item;
+      // if (item.name === name && item.inStock >= 1) item.inStock--;
+
+      // // if (iteif (item.inStock == 0) alert(`out of stock`);
+      // return item;
+    });
+  };
+  // useEffect(() => {
+  //   setShopping(() => stock * 1);
+  // }, [stock]);
+
+  const updatedlist = stock.map((item, index) => (
+    <Button key={index} onClick={moveToCart}>
+      {item.name}:{item.inStock}
+    </Button>
+  ));
+
+  const updatedCart = shopping.map((item, index) => (
+    <Button key={index} onClick={minusCart}>
+      {item.name}:{item.inStock}
+    </Button>
+  ));
+  // const style = {
+  //   backgroundImage:
+  //     "url(" +
+  //     "https://c8.alamy.com/comp/WAB93C/blurred-image-of-a-dress-store-dressed-mannequins-for-fashion-background-abstract-blurred-background-of-interior-clothing-store-at-shopping-mall-WAB93C.jpg" +
+  //     ")",
+  //   backgroundPosition: "center",
+  //   backgroundSize: "cover",
+  //   backgroundRepeat: "no-repeat"
+  // };
+
+  return (
+    <>
+      {/* <Particles options={options} init={initialize} /> */}
+
+      <h1>RJ shopping</h1>
+      <h2>Clothing List</h2>
+      <ul>{updatedlist}</ul>
+      <h2>Shopping Cart</h2>
+      <ul>{updatedCart}</ul>
+      <h3>
+        Bill amount is <button>${costItem}</button>
+      </h3>
+    </>
+  );
+}
